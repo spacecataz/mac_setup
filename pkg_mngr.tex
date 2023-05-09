@@ -1,0 +1,38 @@
+% Package manager how-to:
+\documentclass[12pt, letterpaper]{article}
+
+\usepackage[top=1in, bottom=1.5in, left=.5in, right=.5in]{geometry}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage{enumerate}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE \textbf{Package Managers in Linux-Like Systems}}\\
+  {\large Your friend in installing software}\\
+\end{center}
+
+\section{Background}
+The open-source software environment for Linux-like operating systems provides
+an expansive library that can address almost any issue you may have as a
+scientitific programmer.  However, unlike commercial software for Windows or
+OS X systems, there's probably not a point-and-click installer to get the
+software to work on your computer.  The manual installation process begins with
+obtaining the source code, compiling it so that it works with your machine,
+then placing it into the right directory so that it can be found by your
+system when it is called.  Compounding these complications is the issue of
+dependencies- software frequently relies on other pieces of software to run.
+Therefore, each installation requires you identifying the dependency tree-
+the heirarchy of dependencies you must satisfy in order to successfully
+compile the particular item you want.  This can be a very difficult problem
+for even the most experienced users.
+
+Fortunately, there is a powerful solution- package managers.  Package managers
+are programs that access code repositories, recognize dependency trees, and
+automatically fetch and compile code in a very straight forward manner.  If
+you are using a Linux system, you have a package manager already set up and
+ready to go.  If you are on a Mac, then you just need to install one of
+several available for OS X systems.  If you're in Windows, then you should be
+reading a different document.
+
+\end{document}

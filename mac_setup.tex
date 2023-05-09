@@ -1,0 +1,510 @@
+% Package manager how-to:
+\documentclass[12pt, letterpaper]{article}
+
+\usepackage[top=1in, bottom=1.5in, left=.5in, right=.5in]{geometry}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage{enumerate}
+
+% Add watermark to document:
+\usepackage{draftwatermark}
+\SetWatermarkText{DRAFT}
+\SetWatermarkScale{7}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE \textbf{Your Mac as a Linux Box}}\\
+  {\large A guide to open-source software on OS X}\\
+  {\large \today}\\
+\end{center}
+
+\section{Background}
+In the late 90s, MacOS - the operating system used on Macintosh computers - had
+become a bloated, clumsy mess.  Apple's solution was to turn to Unix-based
+technology developed by the \href{https://en.wikipedia.org/wiki/NeXT}{NeXT}
+company (founded by Steve Jobs during his ``sabatical'' from Apple).
+The result was the now widely used OS X, the most widely used operating system
+outside of Microsoft's Windows platforms.
+Because OS X is, at its core, a Unix system, it was quickly adopted by
+(amongst others) scientists who need both the open-source and command line
+capabilities of Unix/Linux systems, but also need access to popular
+point-and-click programs such as MS Office, MatLab, and others.  OS X is
+therefore the ``best-of-both-worlds'' for scientists.
+
+The move from a traditional Linux systems to OS X comes at a price, however.
+Apple insists on several non-standard implementations of languages (e.g.,
+python), window managers, and file system layouts.  This means that to
+unlock the full Unix/Linux-like capability of your Mac, you need to do a bit
+more setup work.  This guide attempts to get you set up so that you can start
+coding like a Linux pro!
+
+Note that this process will take \emph{time}.  Getting software, installing
+packages, and getting up-and-running requires plenty of time to download and
+compile libraries and packages.  Make sure you're ready before you start.
+
+\section{Accessing the Terminal}
+Open up a Finder window and navigate to
+{\tt Applications/Utilities/Terminal.app}.  Start that up.  Tadaa!  That's all!
+
+...I lied, it's never that easy.  You can happily use the terminal and do
+most of the things you need to do, but I \emph{strongly} recommend obtaining
+an \href{https://en.wikipedia.org/wiki/X_Window_System}{X Windows System}
+(or just X11 for short) compatable terminal.  That is available via
+\href{http://www.xquartz.org/}{XQuartz}, a project dedicated to creating a
+pure X11 experience on your Mac.  Download and install the XQuartz terminal.
+Trust me.  It's better.  Once you have it installed, open a terminal and
+start playing.
+
+A critical thing to understand in X11 is the copy-paste mechanics. In Linux,
+anything you highlight is copied to the clip board and can be pasted
+via a middle-click of the mouse.  In OS X and XQuartz, \textbf{middle click
+  of the mouse will paste any highlighted text in an X11 app OR text copied
+  to the standard OS X clipboard, which ever happened last.}  If you do not
+have a middle button on your mouse, an equivalent input is to hold the option
+key and left-click.  If this behavior
+is not working, be sure to check ``Emulate three button mouse'' in
+XQuartz's preferences.  
+
+This mechanism seems clunky at first, but is much
+faster than the usual command-C command-V keystrokes.  Think about it:
+you usually need to put your hand on the mouse, highlight text, then move
+your hands to the keyboard to press command-C to copy it.  Then, back to the
+mouse to select where you want the text to be placed, then back to the
+keyboard for command-V paste.  With the middle-click paste, your hands stay on
+the mouse the whole time.
+
+An important trick is that you can customize what your terminal window looks
+like.  Under the ``Applications'' menu in XQuartz, click on ``Customize...''.
+You will see the default ``Terminal'' command, which simply calls xterm.
+If you edit the ``command'' column of an existing row, or create a new row and
+edit the command column of that, you can pass options to the xterm command
+that changes the font, color, and other behavior to your terminal.  For example,
+\begin{verbatim}
+xterm -fa Monaco -fs 16 -geometry 60x13
+\end{verbatim}
+creates a window that is 60 by 13 characters in size while changing the font and
+font size for better clarity.  If you click ``Add Item'', you can create a new
+command for more customization.  Suppose you want a window that automatically
+logs into a certain machine and sets new colors so you know that window is
+different than your default.  Do this:
+\begin{verbatim}
+xterm -fg Gold -bg DarkBlue -T Umich -e ssh -YC yourname@login.itd.umich.edu
+\end{verbatim}
+Now, when you select this option from the ``Applications'' menu, you'll get
+a window that automatically logs into your Umich webspace.  For more options,
+see the man page for the
+\href{http://linux.die.net/man/1/xterm}{xterm command}.  
+
+\section{Text Editors}
+At this point it is critical that you have a go-to text editor within your
+X11 environment.  The two most popular are Emacs and Vi.  They are also both
+already installed on all Linux-like machines, including your Mac.
+I'm not going to go in to which you should use or shouldn't use, or the
+advantages of each.  However, I prefer Emacs and find it to be very powerful.
+\href{https://www.gnu.org/software/emacs/refcards/pdf/refcard.pdf}{An
+  Emacs command cheat-sheet can be found here.}  At this point, pick either
+Emacs or Vi and do a quick internet search on how to start, edit text, save
+a file, and exit.  Be sure you can do this before moving forward.
+
+Let's assume that you will be using Emacs.  Start an Emacs session by
+typing ``Emacs'' at the command line prompt.  The terminal then enters Emacs
+mode, and you can begin typing in a blank text file.  If you want to save
+what you're typing, press C-x C-s (that's control and x at the same time,
+then control and s at the same time.)  Emacs will ask you to name the file.
+To quit Emacs, press C-x C-c.  At this moment, the version of Emacs you are
+using has no point-and-click interfaces (called Graphical User Interfaces, or
+\emph{GUIs}).  In Section \ref{sec:ports}, we'll see how to rectify this.
+
+\section{Editing the Configuration File}
+An important and unavoidable part of customizing \emph{any} Linux-like
+environment is editing the configuration files.  You'll find these in your
+home directory (type {\tt cd} to get there) by typing {\tt ls -a}.  Most of
+those files that start with a dot are config files.  Look for {\tt .profile},
+{\tt .bashrc}, or {\tt .cshrc}.  The first two are for users of BASH, the
+Bourne-Again Shell.  The latter is for C-Shell users.  What one you edit
+depends on what shell you are currently using.  To figure that out, type
+{\tt echo \$0}.  \textbf{This guide assumes you are using BASH, as it is the
+  default for modern OS X and Linux machines.}
+
+The shell configuration files are a series of commands that are run when you
+start a new terminal.  You can use these to set your search path, set aliases,
+configure code repositories, and more.  You'll be constantly updating your
+shell config files as you expand your software library and customizing your
+computing environment.
+
+Let's do a few things to customize the shell to your preferences.  Let's start
+by finding what configuration files you have.  Use {\tt ls -a} in your home
+directory to see if any of the following files exist:
+\begin{itemize}
+\item {\tt .profile}
+\item {\tt .bashrc}
+\item {\tt .bash\_profile}
+\end{itemize}
+
+The difference between these three is subtle and sometimes system dependent.
+Different configuration files are used by Bash in different situations, so
+you may find that one works and others appear to have no effect.
+It appears that, for OS X, the file that seems to be the most robust is
+{\tt .profile}.
+
+Open one of the above files using emacs (e.g., {\tt emacs .profile}.  If
+none of the above exist, using {\tt emacs .profile} will create that file.
+Move your cursor towards the end of the file, and add this text:
+\begin{verbatim}
+# Set default text editor:
+export EDITOR='emacs -nw'
+\end{verbatim}
+Note the comment, preceeded by a hastag, so that you can remember what this
+line does in the future.
+If you're a Vi user, replace {\tt 'emacs -nw'} with {\tt 'vi'}.  This command
+changes the default text editor that will open for programs such as
+Visudo.
+
+\subsection{Search Paths}
+\label{sec:path}
+The next thing you'll want to do is change your \emph{search path}.  This is
+the set of directories that your computer searches everytime you enter a
+command.  When you type {\tt ls} to look at the contents of the current
+directory, BASH is quietly searching for an executable program called ``ls''.
+If you want to know where BASH finds this command, use {\tt which} at the
+shell prompt:
+\begin{verbatim}
+which ls
+\end{verbatim}
+This should return {\tt /bin/ls}.  To see your search path, type the following
+at the shell command prompt:
+\begin{verbatim}
+echo $PATH
+\end{verbatim}
+You should now see a colon-separated list of directory paths.  Let's edit
+your config file to change your search path.  Suppose you have a directory
+full of scripts that you would like to access from any location.  Make this
+directory now by typing {\tt mkdir myscripts} from your home directory.
+Now, add these lines to your config file:
+\begin{verbatim}
+# Add scripts directory to search path
+export PATH=$PATH:~/myscripts
+\end{verbatim}
+..where \textasciitilde is shorthand for your home directory path.  This line
+keeps the default search path in tact and appends a new entry to it.  The
+shell will always search the path list in order, so {\tt ~/myscripts} will be
+searched last.  If there are multiple files with the same name in different
+searched files, the first one found will be used.  Therefore, if you want
+your script directory to be searched first, simply change the order like so:
+\begin{verbatim}
+# Add scripts directory to beginning of search path
+export PATH=~/myscripts:$PATH
+\end{verbatim}
+
+\subsection{Activating \& Checking Config Files}
+Now, let's get BASH to recognize the changes you've made.
+To make these changes take effect immediately, type
+{\tt source \textasciitilde/.profile} or {\tt source \textasciitilde/.bashrc}.
+Otherwise, they will take effect once you open the next terminal window.
+
+Test to make sure that these changes by opening a new terminal and using these
+commands at the prompt:
+\begin{verbatim}
+echo $SHELL
+echo $EDITOR
+\end{verbatim}
+The first line should return your colon-separated list of directories; make sure
+that your new directory {\tt \textasciitilde/myscripts} is in that list.
+The second line should print out your default text editor.  Make sure it lists
+the one you set.
+
+If these changes do not seem to be taking effect, there are several things that
+could be wrong.  If you're seeing an error message when you open a new window,
+that means that you've made a mistake in your config file.  One-by-one,
+comment out the lines you added and open a new terminal between each change to
+find out exactly what line is giving you troubles.  Try entering that line
+into the command line prompt directly and change it to figure out how to get it
+to work.  If there is no error but the config file changes do not seem to have
+any effect, it is likely that your shell is not using the configuration file
+you are chosing to edit.  Use the {\tt echo} command in each of your files
+to cause them to print messages to the screen:
+\begin{verbatim}
+echo 'This is your bash_profile file checking in!'
+\end{verbatim}
+Of course, customize the message to match each file's name.  Now, open a new
+terminal window to see what config file is being used and move your commands
+to that one.  Finally, if none of the above items work, turn to Google.  Be
+sure you know what shell you are using ({\tt echo \$0}) as you search.
+
+\section{Sudo Access}
+Installing software requires administrator access.  You know this already:
+when you install new software on your Mac, it asks for your admin user and
+password.  At the command line, you do this via {\tt sudo}, which stands
+for \emph{super user do}.  Any command preceeded by {\tt sudo} at the
+terminal prompt will be executed with administrator rights.  This is required
+for installing new software from the command line prompt.
+
+Only some users can use {\tt sudo}, and you will need it moving forward.  To
+get sudoer access, you must change the \emph{sudoer's file}.  The easy way to
+do this is first log into OS X using an administrator's account.  Then,
+from the command line, use the {\tt visudo} command:
+\begin{verbatim}
+export EDITOR='emacs -nw'
+sudo visudo
+\end{verbatim}
+Enter your administrator password when asekd.  This will open the sudoer's
+file for editing in your preferred editor (set by the {\tt EDITOR} environment
+variable.  Note that because we are now using a different account (i.e., your
+admin account), we have to set this variable again!
+Find the lines inside of the sudoer's file that look like this:
+\begin{verbatim}
+root    ALL=(ALL) ALL
+\end{verbatim}
+Copy that line, but replace 'root' with your regular user name.
+\textbf{Be sure to leave the root line intact or you will have big problems!}
+The result should look something like this:
+\begin{verbatim}
+root    ALL=(ALL) ALL
+dwelling    ALL=(ALL) ALL
+\end{verbatim}
+
+Save and exit your text editor and return to your normal computer account.
+Test your sudo access:
+\begin{verbatim}
+sudo echo "it works!"
+\end{verbatim}
+Sudo will ask for your password and then, if everything was done correctly,
+print out your message to screen.
+
+\section{Installing MacPorts}
+\label{sec:ports}
+Open-source software is the backbone of any linux-based system.  Getting new
+software isn't done like other platforms, where you download installers or
+use an app store.  Rather, you depend on a \emph{package manager}.  A
+package manager allows you to search available open-source software,
+automatically download a program you want to install and all of its
+dependencies, and install everything you need.
+
+There are options for OS X.  The three big ones are, in order of age,
+\href{http://www.finkproject.org/}{Fink},
+\href{https://www.macports.org/}{MacPorts}, and
+\href{http://brew.sh/}{Homebrew}.
+I recommend MacPorts because it is well established and the packages are
+well maintained.  The following guide is a crash-course to installing and
+using MacPorts.  For a more complete description, check out the
+\href{https://guide.macports.org}{official guide} and don't forget to
+\href{http://www.google.com}{GDS} when you get stuck.
+
+\subsection{Installing and Configuring MacPorts}
+Start by downloading and installing MacPorts from the
+project website.  Follow the instructions on the website, including installing
+XCode from Apple.  Part of the installation process is editing your search
+path to include {\tt /opt/local/bin}, where MacPorts keeps software.
+Be sure to check that your shell config file was correctly edited by the
+installer.  A recommended change is to put the MacPorts directory at the
+beginning of your search path, like so:
+\begin{verbatim}
+export PATH=/opt/local/bin/:$PATH
+\end{verbatim}
+This prevents your shell from finding Mac's default programs before your
+shiny new MacPorts versions.
+
+\subsection{Installing Code}
+Let's use MacPorts.  Note that there are more in-depth guides to doing this,
+such as the one provided on the MacPorts website.
+Start by finding a package you want to install, such as
+emacs.  To list ALL available software, use this command: {\tt port list}.
+That's a long list!  let's search for just emacs:
+\begin{verbatim}
+port search emacs
+\end{verbatim}
+This returns a list of everything that has ``emacs'' in the name or description.
+While this list is much shorter than just listing everything (50 results at the time
+of writing), it's still too much.
+I've found that {\tt grep} can help create more concentrated searches:
+\begin{verbatim}
+port list | grep -i emacs
+\end{verbatim}
+This will print out all versions of emacs that are available.  The plain-old
+{\tt emacs} seems good enough.  For each sotware package, there are also
+\emph{variants}, which allow customizations of your install.  We can
+see our variants for emacs like so:
+\begin{verbatim}
+port variant emacs
+\end{verbatim}
+The {\tt x11} variant gives us emacs in its own window, which is what I
+prefer!  So finally, let's install it:
+\begin{verbatim}
+sudo port install emacs +x11
+\end{verbatim}
+...and MacPorts goes to work. This will take a while, but it does it
+eventually.  If anything ever goes wrong, find the exact error message and
+search it online.  The MacPorts user community is very large and active.
+Very rarely is there a problem that you have that someone else hasn't already
+solved.
+
+\subsection{Activating \& Selecting Software}
+Inevitably, you'll have more than one version of a program installed via
+MacPorts.
+There are many reasons for this, but most commonly this is due to different
+dependencies for different software.  For example, one piece of software
+may require Python 2.7 to install, so MacPorts installs Python 2.7 as a
+dependency
+while installing your target software.  A different program may require
+Python 3.6
+as a dependency, so MacPorts installs that as well.  Worse yet, some libraries
+require prequisites with one set of variants; other libraries require the same
+prequisites with \emph{different} variants!  When you call that software from
+the command line, which one are you using?
+
+There are two tools to help you sort things out.  The first is \emph{activate},
+which allows you to choose between two identical pieces of software that have
+different variants.  As this is not a common procedure, I'll simply
+\href{https://guide.macports.org/#using.port.upgrade}{link to a descriptive
+  example here}.  The other tool is \emph{select}, which is frequently used
+to help decide which version is the ``default'' version when called from
+the command line.
+
+An illustrative example comes in the form of the Gnu C Compiler, {\tt gcc}.
+This is used frequently, both by the user and by many other pieces of software.
+I can see what versions are installed via the following syntax:
+\begin{verbatim}
+port select --list gcc
+\end{verbatim}
+This returns quite the list:
+\begin{verbatim}
+Available versions for gcc:
+        mp-gcc5
+        mp-gcc7
+        mp-gcc8
+        mp-gcc9 (active)
+        none
+\end{verbatim}
+When I type {\tt gcc} at the command prompt, it is the equivalent of typing
+{\tt gcc-mp-9} (as indicated by ``active'' next to that version).  Changing
+that is simple, but requires {\tt sudo} access:
+\begin{verbatim}
+sudo port select --set gcc mp-gcc8
+\end{verbatim}
+..and that's the gist of using \emph{select}.
+
+Note that not all software is compatable with \emph{select} (in fact, most
+isn't!).  MacPorts will complain if you try to do something that doesn't have
+\emph{select} options.  Check to see if you have the corresponding
+{\tt \*\_select} installed-- for example, if the above commands aren't working,
+ensure that {\tt gcc\_select} is installed:
+\begin{verbatim}
+sudo port install gcc_select
+\end{verbatim}
+
+At any time, you can see the full status of all software that can be \emph{select}ed:
+\begin{verbatim}
+port select --summary
+\end{verbatim}
+This will tell you what software can be set via \emph{select}, what the options
+are for each, and what is currently set:
+\begin{verbatim}
+Name                    Selected              Options
+====                    ========              =======
+clang                   none                  mp-clang-7.0 mp-clang-8.0 mp-clang-9.0 none
+gcc                     mp-gcc9               mp-gcc5 mp-gcc7 mp-gcc8 mp-gcc9 none
+ipython                 py38-ipython          py37-ipython py38-ipython none
+ipython3                none                  py37-ipython py38-ipython none
+mpi                     openmpi-gcc9-fortran  mpich-gcc5-fortran openmpi-gcc7-fortran openmpi-gcc9-fortran openmpi-mp-fortran none
+pip3                    none                  pip37 none
+python                  python38              python27 python36 python37 python38 none
+python3                 python38              python36 python37 python38 none
+spyder                  none                  spyder-37 none
+
+\end{verbatim}
+
+\subsection{Installing Python}
+\label{sec:python}
+Let's see how we install Python and all of its critical science
+packages via MacPorts:
+\begin{verbatim}
+sudo port install python37
+sudo port select --set python python37
+sudo port install py37-ipython py37-scipy py37-numpy py37-matplotlib ipython_select
+sudo port select --set ipython py37-ipython
+\end{verbatim}
+
+The {\tt select} commands make it so that we can call python and ipython
+using their names, not their names and their versions (i.e., {\tt ipython-3.7}).
+
+\subsection{Other Useful Packages}
+Here's a quick list of some tools that are very useful.  They are listed by
+their MacPorts name and suggested variants.
+\begin{itemize}
+  \item \textbf{\tt tkdiff}: a gui-based tool for comparing two text files.
+  \item \textbf{\tt texlive}: Installs \LaTeX and some basic libraries.
+    Most \LaTeX add-on libraries can be installed via MacPorts, too.
+  \item \textbf{\tt TexShop}: a gui-based tool for editing \LaTeX files.  A
+    clickable executable file will be placed in your Applications/MacPorts
+    directory.
+  \item \textbf{\tt cdf}: NASA's Common Data Format library.
+  \item \textbf{\tt gcc49}: The Gnu C Compiler.  Includes gfortran, the leading
+    open-sourced Fortran compiler.
+  \item \textbf{\tt openmpi}: Open source Message Passing Interface library for
+    compiling parallized software.
+  \item \textbf{\tt ImageMagick +x11}: Powerful open-source image manipulation
+    tools.
+\end{itemize}
+
+\section{Confirming Your Path}
+At this point, you're nearly done, but it's a great idea to make sure that
+your newly installed software is properly accessible. Remember that OS X has
+its own non-standard versions of programs such as Python, so even though you're
+using python, it may not be the right one, and only the right one will have
+your extra installed goodies, such as Numpy.  Use {\tt which} to
+ensure that you set your software path correctly.
+\begin{verbatim}
+which python
+\end{verbatim}
+If you see anything besides {\tt /opt/local/bin/python} here, be sure to
+revisit setting up your search path in Sections \ref{sec:path} and
+\ref{sec:python}.   Check for programs with a \emph{similar} name using
+tab-complete (i.e., typing {\tt python} then pressing tab repeatedly to see
+if there are other versions of python.)  Use {\tt which} on those programs.
+Are they in the right place?  If so, use MacPorts' select syntax to set the
+default version of python, as we did in Section \ref{sec:python}.
+
+Note that the path returned by {\tt which} is \textbf{user dependent!}  This
+includes {\tt root}!  A very common problem arises when users attempt to install
+3rd party python packages.  The syntax to do this often looks like this,
+\begin{verbatim}
+python setup.py install
+\end{verbatim}
+...but this doesn't work due to insufficient permissions!  So, you try again:
+\begin{verbatim}
+sudo python setup.py install
+\end{verbatim}
+Note the use of {\tt sudo} to execute this command as root.  The command
+executes successfully, but the python package cannot be imported when you run
+python under your standard user account.  What happened?  The trick is to use
+{\tt which} to learn which version of python was used by {\tt root} to install
+the package:
+\begin{verbatim}
+sudo which python
+\end{verbatim}
+What is the output here?  Often, it's not the MacPorts install of Python, but
+Apple's customized version ({\tt which} returns {\tt /usr/bin/python}).  There
+are several ways to resolve this, including specfying the full path name of
+the program (e.g., {\tt sudo /opt/local/bin/python setup.py install}) or editing
+the config files for the different user.
+
+\textbf{When performing an action using {\tt sudo} using MacPorts-installed
+  software, always check your path as root!}
+
+\section{Epilogue}
+...and you're off!  Hopefully this primer has set you forward successfully.
+Working from the command line is immensely powerful and becomes second nature
+the more you use it.  It's not without its issues, though, so be ready for
+more challenges.  In the end, it is an excellent way to get science done as
+efficiently as possible.
+
+For those who have never used a pure Linux machine, I urge you to find an
+excuse to do so.  The steps outlined above are obnoxious enough to make
+the novice user question the wisdom of turning to a command line approach.
+However, setting up a real Linux system is so trivial and fast that it makes
+you wonder why Apple doesn't include the command line tools, including package
+managers, in a more native fashion.  On a system that fully embraces the
+open-source approach, the whole process is elegant and fast.  Indeed, many
+people who start with Macs wind up with a dedicated Linux machine on the side.
+
+\end{document}
