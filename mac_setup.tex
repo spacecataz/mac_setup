@@ -3,6 +3,7 @@
 
 \usepackage[top=1in, bottom=1.5in, left=.5in, right=.5in]{geometry}
 \usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage[most]{tcolorbox} % For call-out boxes.
 \usepackage{enumerate}
 
 % Add watermark to document:
@@ -14,7 +15,8 @@
 
 \begin{center}
   {\LARGE \textbf{Your Mac as a Linux Box}}\\
-  {\large A guide to open-source software on OS X}\\
+  {\Large A guide to open-source software on MacOS}\\
+  {\large \href{mailto:dwelling@umich.edu}{D. T. Welling, U. of Michigan}}\\
   {\large \today}\\
 \end{center}
 
@@ -23,15 +25,15 @@ In the late 90s, MacOS - the operating system used on Macintosh computers - had
 become a bloated, clumsy mess.  Apple's solution was to turn to Unix-based
 technology developed by the \href{https://en.wikipedia.org/wiki/NeXT}{NeXT}
 company (founded by Steve Jobs during his ``sabatical'' from Apple).
-The result was the now widely used OS X, the most widely used operating system
-outside of Microsoft's Windows platforms.
-Because OS X is, at its core, a Unix system, it was quickly adopted by
+The result was the now widely used Mac (and subsequent versions past 10),
+the most widely used operating system outside of Microsoft's Windows platforms.
+Because modern MacOS is, at its core, a Unix system, it was quickly adopted by
 (amongst others) scientists who need both the open-source and command line
 capabilities of Unix/Linux systems, but also need access to popular
-point-and-click programs such as MS Office, MatLab, and others.  OS X is
+point-and-click programs such as MS Office, Matlab, and others.  Mac is
 therefore the ``best-of-both-worlds'' for scientists.
 
-The move from a traditional Linux systems to OS X comes at a price, however.
+The move from a traditional Linux systems to Mac comes at a price, however.
 Apple insists on several non-standard implementations of languages (e.g.,
 python), window managers, and file system layouts.  This means that to
 unlock the full Unix/Linux-like capability of your Mac, you need to do a bit
@@ -41,6 +43,14 @@ coding like a Linux pro!
 Note that this process will take \emph{time}.  Getting software, installing
 packages, and getting up-and-running requires plenty of time to download and
 compile libraries and packages.  Make sure you're ready before you start.
+
+\begin{tcolorbox}[title=\textbf{Growing Competition}]
+  Since OS X, MacOS has enjoyed a unique position as a user-friendly and
+  broadly-recognized Unix-based operating system.
+  However, the emergence of \emph{Windows Subsystem for Linux} has
+  provided a powerful alternative. WSL combines the convenience of a
+  Windows-based OS and a near-native Linux experience.
+\end{tcolorbox}
 
 \section{Accessing the Terminal}
 Open up a Finder window and navigate to
@@ -57,13 +67,13 @@ start playing.
 
 A critical thing to understand in X11 is the copy-paste mechanics. In Linux,
 anything you highlight is copied to the clip board and can be pasted
-via a middle-click of the mouse.  In OS X and XQuartz, \textbf{middle click
+via a middle-click of the mouse.  In Mac and XQuartz, \textbf{middle click
   of the mouse will paste any highlighted text in an X11 app OR text copied
-  to the standard OS X clipboard, which ever happened last.}  If you do not
+  to the standard Mac clipboard, which ever happened last.}  If you do not
 have a middle button on your mouse, an equivalent input is to hold the option
 key and left-click.  If this behavior
 is not working, be sure to check ``Emulate three button mouse'' in
-XQuartz's preferences.  
+XQuartz's preferences.
 
 This mechanism seems clunky at first, but is much
 faster than the usual command-C command-V keystrokes.  Think about it:
@@ -93,7 +103,15 @@ xterm -fg Gold -bg DarkBlue -T Umich -e ssh -YC yourname@login.itd.umich.edu
 Now, when you select this option from the ``Applications'' menu, you'll get
 a window that automatically logs into your Umich webspace.  For more options,
 see the man page for the
-\href{http://linux.die.net/man/1/xterm}{xterm command}.  
+\href{http://linux.die.net/man/1/xterm}{xterm command}.
+
+\begin{tcolorbox}[title=\textbf{Customize for Success}]
+  Creating a custom set of xterm windows can greatly improve your workflow.
+  It can improve readability for a variety of situations (e.g., personal use
+  versus screen projection for an audience).
+  Setting window colors for different purposes (e.g., local versus remote
+  sessions) can help keep your workspace organized.
+\end{tcolorbox}
 
 \section{Text Editors}
 At this point it is critical that you have a go-to text editor within your
@@ -107,24 +125,34 @@ Emacs or Vi and do a quick internet search on how to start, edit text, save
 a file, and exit.  Be sure you can do this before moving forward.
 
 Let's assume that you will be using Emacs.  Start an Emacs session by
-typing ``Emacs'' at the command line prompt.  The terminal then enters Emacs
+typing {\tt emacs} at the command line prompt.  The terminal then enters Emacs
 mode, and you can begin typing in a blank text file.  If you want to save
-what you're typing, press C-x C-s (that's control and x at the same time,
+what you're typing, press {\tt C-x C-s} (that's control and x at the same time,
 then control and s at the same time.)  Emacs will ask you to name the file.
-To quit Emacs, press C-x C-c.  At this moment, the version of Emacs you are
+To quit Emacs, press {\tt C-x C-c}.  At this moment, the version of Emacs you are
 using has no point-and-click interfaces (called Graphical User Interfaces, or
 \emph{GUIs}).  In Section \ref{sec:ports}, we'll see how to rectify this.
 
 \section{Editing the Configuration File}
 An important and unavoidable part of customizing \emph{any} Linux-like
 environment is editing the configuration files.  You'll find these in your
-home directory (type {\tt cd} to get there) by typing {\tt ls -a}.  Most of
-those files that start with a dot are config files.  Look for {\tt .profile},
-{\tt .bashrc}, or {\tt .cshrc}.  The first two are for users of BASH, the
-Bourne-Again Shell.  The latter is for C-Shell users.  What one you edit
+home directory (type {\tt cd} to get there) and can see them by typing
+{\tt ls -a}.  Most of
+those files that start with a dot (e.g., {\tt .profile}) are config files.
+Look for {\tt .profile}, {\tt .bashrc}, {\tt .zprofile}, or {\tt .zshrc}.
+The first two are for users of BASH, the
+Bourne-Again Shell.  The latter is for Z-Shell users.  What one you edit
 depends on what shell you are currently using.  To figure that out, type
-{\tt echo \$0}.  \textbf{This guide assumes you are using BASH, as it is the
-  default for modern OS X and Linux machines.}
+{\tt echo \$0}.  \textbf{This guide assumes you are using Z-Shell, as it is the
+  default for modern Mac and Linux machines.}
+
+\begin{tcolorbox}[title=\textbf{Shell Shock}]
+  The "shell" is just the program that allows you to interface with the
+  operating system. There are many different shells, but they all work
+  fairly similarly for novice users. The biggest difference is what configuration
+  files are used. Make sure that you edit the right config file given the
+  shell you are using!
+\end{tcolorbox}
 
 The shell configuration files are a series of commands that are run when you
 start a new terminal.  You can use these to set your search path, set aliases,
@@ -137,18 +165,18 @@ by finding what configuration files you have.  Use {\tt ls -a} in your home
 directory to see if any of the following files exist:
 \begin{itemize}
 \item {\tt .profile}
-\item {\tt .bashrc}
-\item {\tt .bash\_profile}
+\item {\tt .zshrc}
+\item {\tt .zprofile}
 \end{itemize}
 
 The difference between these three is subtle and sometimes system dependent.
-Different configuration files are used by Bash in different situations, so
+Different configuration files are used by Z-Shell in different situations, so
 you may find that one works and others appear to have no effect.
-It appears that, for OS X, the file that seems to be the most robust is
+It appears that, for Mac, the file that seems to be the most robust is
 {\tt .profile}.
 
-Open one of the above files using emacs (e.g., {\tt emacs .profile}.  If
-none of the above exist, using {\tt emacs .profile} will create that file.
+Open one of the above files using emacs (e.g., {\tt emacs .zprofile}.  If
+none of the above exist, using {\tt emacs .zprofile} will create that file.
 Move your cursor towards the end of the file, and add this text:
 \begin{verbatim}
 # Set default text editor:
@@ -159,14 +187,27 @@ line does in the future.
 If you're a Vi user, replace {\tt 'emacs -nw'} with {\tt 'vi'}.  This command
 changes the default text editor that will open for programs such as
 Visudo.
+Changes to the configuration files will not take effect until you start a
+new terminal session or you reload the file (e.g., {\tt source .zprofile}).
+
+Sometimes, determining which configuration file is actually being used can
+be tricky. One way to get around this is to add a print statement to your file
+that will execute when the file is loaded. For example, add this line to
+{\tt .zprofile}: {\tt echo "THIS FILE LOADED!"}. When you start a new
+terminal, you should see that message printed to screen. If not, that
+configuration file is not being used. Perhaps another one is taking precedence,
+or you are not using Z-Shell. Continue to add similar debug statements until
+you determine which file is being used.
 
 \subsection{Search Paths}
 \label{sec:path}
 The next thing you'll want to do is change your \emph{search path}.  This is
 the set of directories that your computer searches everytime you enter a
 command.  When you type {\tt ls} to look at the contents of the current
-directory, BASH is quietly searching for an executable program called ``ls''.
-If you want to know where BASH finds this command, use {\tt which} at the
+directory, Z-Shell is quietly searching for an executable program called ``ls''.
+In Linux/Unix systems, \emph{every} command and program is a file stored
+somewhere on the computer.
+If you want to know where Z-shell finds this command, use {\tt which} at the
 shell prompt:
 \begin{verbatim}
 which ls
@@ -185,7 +226,7 @@ Now, add these lines to your config file:
 # Add scripts directory to search path
 export PATH=$PATH:~/myscripts
 \end{verbatim}
-..where \textasciitilde is shorthand for your home directory path.  This line
+..where \textasciitilde \  is shorthand for your home directory path.  This line
 keeps the default search path in tact and appends a new entry to it.  The
 shell will always search the path list in order, so {\tt ~/myscripts} will be
 searched last.  If there are multiple files with the same name in different
@@ -196,16 +237,25 @@ your script directory to be searched first, simply change the order like so:
 export PATH=~/myscripts:$PATH
 \end{verbatim}
 
+\begin{tcolorbox}[title=\textbf{Confusing Paths}]
+  It is common to have multiple versions of different software installed
+  on a computer - either on purpose or accident. It's easy to use one
+  version when you think you're using another. When weird behavior arises,
+  make sure that you use {\tt which} and check your system path to ensure
+  that you're actually using the software that you think you're using.
+\end{tcolorbox}
+
 \subsection{Activating \& Checking Config Files}
-Now, let's get BASH to recognize the changes you've made.
+Now, let's get Z-shell to recognize the changes you've made.
 To make these changes take effect immediately, type
-{\tt source \textasciitilde/.profile} or {\tt source \textasciitilde/.bashrc}.
+{\tt source \textasciitilde/.zprofile} or {\tt source \textasciitilde/.zshrc}
+(depending on which you edited).
 Otherwise, they will take effect once you open the next terminal window.
 
 Test to make sure that these changes by opening a new terminal and using these
 commands at the prompt:
 \begin{verbatim}
-echo $SHELL
+echo $PATH
 echo $EDITOR
 \end{verbatim}
 The first line should return your colon-separated list of directories; make sure
@@ -241,7 +291,7 @@ for installing new software from the command line prompt.
 
 Only some users can use {\tt sudo}, and you will need it moving forward.  To
 get sudoer access, you must change the \emph{sudoer's file}.  The easy way to
-do this is first log into OS X using an administrator's account.  Then,
+do this is first log into Mac using an administrator's account.  Then,
 from the command line, use the {\tt visudo} command:
 \begin{verbatim}
 export EDITOR='emacs -nw'
@@ -280,7 +330,7 @@ package manager allows you to search available open-source software,
 automatically download a program you want to install and all of its
 dependencies, and install everything you need.
 
-There are options for OS X.  The three big ones are, in order of age,
+There are options for Mac.  The three big ones are, in order of age,
 \href{http://www.finkproject.org/}{Fink},
 \href{https://www.macports.org/}{MacPorts}, and
 \href{http://brew.sh/}{Homebrew}.
@@ -448,7 +498,7 @@ their MacPorts name and suggested variants.
 
 \section{Confirming Your Path}
 At this point, you're nearly done, but it's a great idea to make sure that
-your newly installed software is properly accessible. Remember that OS X has
+your newly installed software is properly accessible. Remember that Mac has
 its own non-standard versions of programs such as Python, so even though you're
 using python, it may not be the right one, and only the right one will have
 your extra installed goodies, such as Numpy.  Use {\tt which} to
