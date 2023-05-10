@@ -113,6 +113,15 @@ see the man page for the
   sessions) can help keep your workspace organized.
 \end{tcolorbox}
 
+Another critical tip is the {\tt open} command. This will open a file or folder
+in the MacOS environment. For example, {\tt open .} (yes, that's a dot) opens
+the current working directory using the MacOS Finder. You can also open
+files, e.g., {\tt open mac\_setup.pdf} will open this PDF (if it is in the
+current directory) using the system PDF viewer. {\tt open} is a great utility
+for bridging the command line and GUI operating system. In Debian Linux
+environments, the analog command is, {\tt xdg-open}; Windows Subsystem for
+Linux also as {\tt explorer.exe} to open a file explorer window.
+
 \section{Text Editors}
 At this point it is critical that you have a go-to text editor within your
 X11 environment.  The two most popular are Emacs and Vi.  They are also both
@@ -338,13 +347,16 @@ I recommend MacPorts because it is well established and the packages are
 well maintained.  The following guide is a crash-course to installing and
 using MacPorts.  For a more complete description, check out the
 \href{https://guide.macports.org}{official guide} and don't forget to
-\href{http://www.google.com}{GDS} when you get stuck.
+\href{http://www.google.com}{GDS (\emph{Google Dat Shtuff})} when you get stuck.
 
 \subsection{Installing and Configuring MacPorts}
 Start by downloading and installing MacPorts from the
 project website.  Follow the instructions on the website, including installing
-XCode from Apple.  Part of the installation process is editing your search
+XCode from Apple. There are critical steps that must be done, including
+installing the XCode command line tools from the terminal.
+Part of the installation process is editing your search
 path to include {\tt /opt/local/bin}, where MacPorts keeps software.
+MacPorts may do this automatically.
 Be sure to check that your shell config file was correctly edited by the
 installer.  A recommended change is to put the MacPorts directory at the
 beginning of your search path, like so:
@@ -396,7 +408,7 @@ dependencies for different software.  For example, one piece of software
 may require Python 2.7 to install, so MacPorts installs Python 2.7 as a
 dependency
 while installing your target software.  A different program may require
-Python 3.6
+Python 3.11
 as a dependency, so MacPorts installs that as well.  Worse yet, some libraries
 require prequisites with one set of variants; other libraries require the same
 prequisites with \emph{different} variants!  When you call that software from
@@ -538,8 +550,17 @@ are several ways to resolve this, including specfying the full path name of
 the program (e.g., {\tt sudo /opt/local/bin/python setup.py install}) or editing
 the config files for the different user.
 
-\textbf{When performing an action using {\tt sudo} using MacPorts-installed
-  software, always check your path as root!}
+\begin{tcolorbox}[title=\textbf{Rooting Out Path Problems}]
+  Remember that {\tt sudo} performs an action as the root user, not \emph{you}.
+  Therefore, it will use the root file path and can give some unexpected
+  results.
+  When performing an action using {\tt sudo} using MacPorts-installed
+  software, always check your path as root!
+\end{tcolorbox}
+
+\section{Keeping MacPorts Up-To-Date}
+
+
 
 \section{Epilogue}
 ...and you're off!  Hopefully this primer has set you forward successfully.
